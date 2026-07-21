@@ -130,7 +130,7 @@ function Contact() {
                 <div className="font-semibold">Email</div>
                 <a
                   href="mailto:rotaract.kit@example.com"
-                  className="mt-1 block text-sm text-muted-foreground hover:text-white"
+                  className="mt-1 block text-sm text-muted-foreground hover:text-foreground"
                 >
                   rotaract.kit@example.com
                 </a>

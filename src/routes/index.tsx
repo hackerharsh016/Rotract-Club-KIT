@@ -70,7 +70,7 @@ function Index() {
             className="absolute inset-0"
             style={{
               background:
-                "radial-gradient(ellipse at center, transparent 40%, rgba(11,11,15,0.85) 90%)",
+                "radial-gradient(ellipse at center, transparent 40%, var(--hero-fade) 90%)",
             }}
           />
         </div>
@@ -168,7 +168,7 @@ function Index() {
           </div>
           <Link
             to="/events"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-white"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
           >
             View all <ArrowRight className="h-4 w-4" />
           </Link>

@@ -31,7 +31,7 @@ function AdminMessages() {
         {msgs.map((m) => (
           <div key={m.id} className="glass p-5">
             <div className="flex items-start justify-between gap-3">
-              <div><div className="font-semibold">{m.name}</div><a href={`mailto:${m.email}`} className="text-xs text-muted-foreground hover:text-white">{m.email}</a></div>
+              <div><div className="font-semibold">{m.name}</div><a href={`mailto:${m.email}`} className="text-xs text-muted-foreground hover:text-foreground">{m.email}</a></div>
               <div className="flex items-center gap-2"><span className="text-xs text-muted-foreground">{new Date(m.created_at).toLocaleString()}</span><button onClick={() => remove(m.id)} className="grid h-8 w-8 place-items-center rounded-full border border-border hover:bg-muted"><Trash2 className="h-3.5 w-3.5" /></button></div>
             </div>
             <p className="mt-3 whitespace-pre-wrap text-sm text-foreground/80">{m.message}</p>
