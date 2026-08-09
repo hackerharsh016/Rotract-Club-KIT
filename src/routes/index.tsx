@@ -60,68 +60,76 @@ function Index() {
 
   return (
     <div ref={heroRef}>
-      {/* HERO */}
-      <section className="relative isolate overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <Suspense fallback={<div className="absolute inset-0" style={{ background: "var(--gradient-brand-soft)" }} />}>
+      {/* HERO SECTION WITH FULL-PAGE 3D ROTARACT EMBLEM */}
+      <section className="relative isolate min-h-[92vh] flex flex-col justify-center overflow-hidden">
+        {/* Full-Page Background 3D Logo Layer */}
+        <div className="absolute inset-0 -z-10 select-none overflow-hidden">
+          <Suspense fallback={null}>
             <HeroParticles />
           </Suspense>
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                "radial-gradient(ellipse at center, transparent 40%, var(--hero-fade) 90%)",
+                "radial-gradient(ellipse at 50% 50%, transparent 35%, var(--background) 92%)",
             }}
           />
         </div>
 
-        <div className="mx-auto max-w-7xl px-5 pt-20 pb-32 md:pt-32 md:pb-44">
-          <div className="hero-line inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-3 py-1.5 text-xs tracking-wide text-foreground/80 backdrop-blur">
+        <div className="mx-auto w-full max-w-7xl px-5 pt-24 pb-28 md:pt-32 md:pb-36">
+          <div className="hero-line inline-flex items-center gap-2 rounded-full border border-border/80 bg-background/60 px-4 py-1.5 text-xs font-medium tracking-wide text-foreground/90 backdrop-blur-md shadow-sm">
             <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-gold-hex)]" />
-            Rotaract International · Club of KIT Sunshine
+            <span>Rotaract International · Club of KIT Sunshine</span>
           </div>
 
-          <h1 className="hero-line mt-6 max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-            Service that <span className="text-gradient-brand">shines</span>.
-            <br />
-            Leaders in the making.
+          <h1 className="hero-line mt-6 max-w-4xl text-5xl font-extrabold leading-[1.06] tracking-tight md:text-7xl lg:text-8xl">
+            Rotaract Club of <br />
+            <span className="text-gradient-brand">KIT Sunshine</span>
           </h1>
-          <p className="hero-line mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+          <p className="hero-line mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl font-normal">
             We are the Rotaract Club at KIT College of Engineering, Kolhapur —
             students turning empathy into projects, projects into impact, and impact
             into a community that shines.
           </p>
 
-          <div className="hero-line mt-10 flex flex-wrap items-center gap-3">
+          <div className="hero-line mt-10 flex flex-wrap items-center gap-3.5">
             <Link
               to="/events"
-              className="group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-xl transition hover:brightness-110"
+              className="group inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-sm font-semibold text-white shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
               style={{ background: "var(--gradient-brand)" }}
             >
               Explore events
-              <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+              <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
             </Link>
             <Link
               to="/about"
-              className="glass inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-foreground/90 hover:bg-muted"
+              className="glass inline-flex items-center gap-2 px-7 py-3.5 text-sm font-medium text-foreground/90 transition-all hover:scale-[1.02] hover:bg-muted/80 active:scale-[0.98]"
             >
               About the club
             </Link>
           </div>
 
-          <div className="hero-line mt-16 grid max-w-3xl grid-cols-3 gap-4">
+          <div className="hero-line mt-16 grid max-w-3xl grid-cols-3 gap-3 md:gap-5">
             {[
               { k: "12+", v: "Projects a year" },
               { k: "80+", v: "Active members" },
               { k: "5k+", v: "Lives touched" },
             ].map((s) => (
-              <div key={s.v} className="glass px-5 py-4 text-center">
-                <div className="text-2xl font-bold text-gradient-brand md:text-3xl">
+              <div key={s.v} className="glass px-5 py-4 text-center transition-transform hover:-translate-y-0.5">
+                <div className="text-2xl font-bold text-gradient-brand md:text-3xl lg:text-4xl">
                   {s.k}
                 </div>
-                <div className="mt-1 text-xs text-muted-foreground md:text-sm">{s.v}</div>
+                <div className="mt-1 text-xs text-muted-foreground font-medium md:text-sm">{s.v}</div>
               </div>
             ))}
+          </div>
+
+          <div className="hero-line mt-10 inline-flex items-center gap-2.5 rounded-full border border-border/40 bg-background/30 px-3.5 py-1 text-[11px] font-medium text-muted-foreground backdrop-blur-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
+            </span>
+            <span>Interactive 3D Emblem · Move cursor or touch to explore</span>
           </div>
         </div>
       </section>
