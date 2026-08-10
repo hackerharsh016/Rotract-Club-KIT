@@ -58,13 +58,13 @@ export function SiteFooter() {
             </li>
             <li className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-muted-foreground" />
-              <a href="mailto:rotaract.kit@example.com" className="hover:text-foreground">
-                rotaract.kit@example.com
+              <a href="mailto:rotractclubkitcoek@gmail.com" className="hover:text-foreground">
+                 rotractclubkitcoek@gmail.com
               </a>
             </li>
             <li className="flex items-center gap-3 pt-2">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/rotaractclubkit_sunshine?igsh=MTR6MjFqeDlrcW91bQ=="
                 target="_blank"
                 rel="noreferrer noopener"
                 aria-label="Instagram"
@@ -88,7 +88,7 @@ export function SiteFooter() {
       <div className="border-t border-border">
         <div className="mx-auto flex flex-col sm:flex-row max-w-7xl items-center justify-between gap-3 px-5 py-5 text-center sm:text-left text-xs text-muted-foreground/80">
           <span>© {new Date().getFullYear()} Rotaract Club of KIT Sunshine</span>
-          <span>Made with care by the club team</span>
+          <span>Made with care by Rtr. Harsh Potdar</span>
         </div>
       </div>
     </footer>

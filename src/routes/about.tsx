@@ -244,7 +244,7 @@ function About() {
           {/* Professional Development */}
           <div className="stagger-item glass p-8 md:p-10 rounded-3xl group transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-foreground">Professional Dev</h3>
+              <h3 className="text-2xl font-bold text-foreground">Professional Services</h3>
               <div className="text-3xl font-extrabold text-border/40 group-hover:text-[color:var(--brand-gold-hex)]/20 transition-colors">03</div>
             </div>
             <div className="text-lg font-medium text-[color:var(--brand-gold-hex)] mb-4">💼 Preparing youth for tomorrow.</div>

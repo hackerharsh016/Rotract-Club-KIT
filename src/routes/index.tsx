@@ -111,8 +111,8 @@ function Index() {
 
             <div className="hero-line mt-16 grid w-full max-w-md grid-cols-3 gap-4">
               {[
-                { k: "12+", v: "Projects" },
-                { k: "80+", v: "Members" },
+                { k: "125+", v: "Projects" },
+                { k: "50+", v: "Members" },
                 { k: "5k+", v: "Lives" },
               ].map((s) => (
                 <div key={s.v} className="glass px-3 py-4 text-center transition-transform hover:-translate-y-0.5">
@@ -184,7 +184,7 @@ function Index() {
           {[
             { title: "Club Service", body: "Building the family within. Focused on team-building, celebrations, and member engagement." },
             { title: "Community Service", body: "Turning compassion into action. Serving needs through health, education, and social initiatives." },
-            { title: "Professional Development", body: "Preparing youth for tomorrow. Building skills, confidence, and leadership for career growth." },
+            { title: "Professional Services", body: "Preparing youth for tomorrow. Building skills, confidence, and leadership for career growth." },
             { title: "International Service", body: "Different cultures. One Rotaract. Connecting globally to learn that service has no borders." },
           ].map((p, i) => (
             <div key={p.title} className="reveal glass p-6 group transition-transform hover:-translate-y-1">

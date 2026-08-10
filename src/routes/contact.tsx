@@ -129,10 +129,10 @@ function Contact() {
               <div>
                 <div className="font-semibold">Email</div>
                 <a
-                  href="mailto:rotaract.kit@example.com"
+                  href="mailto:rotractclubkitcoek@gmail.com"
                   className="mt-1 block text-sm text-muted-foreground hover:text-foreground"
                 >
-                  rotaract.kit@example.com
+                   rotractclubkitcoek@gmail.com
                 </a>
               </div>
             </div>
@@ -141,7 +141,7 @@ function Contact() {
             <div className="font-semibold">Follow the club</div>
             <div className="mt-3 flex gap-2">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/rotaractclubkit_sunshine?igsh=MTR6MjFqeDlrcW91bQ=="
                 target="_blank"
                 rel="noreferrer noopener"
                 className="grid h-10 w-10 place-items-center rounded-full border border-border hover:bg-muted"
