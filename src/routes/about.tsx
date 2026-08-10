@@ -25,64 +25,7 @@ function About() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let active = true;
-    let ctx: { revert: () => void } | undefined;
-
-    (async () => {
-      const { gsap } = await import("gsap");
-      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
-      gsap.registerPlugin(ScrollTrigger);
-
-      if (!active) return;
-
-      ctx = gsap.context(() => {
-        // Hero lines animation
-        gsap.from(".hero-text", {
-          y: 40,
-          opacity: 0,
-          duration: 1,
-          ease: "power3.out",
-          stagger: 0.15,
-        });
-
-        // Scroll reveal animation
-        gsap.utils.toArray<HTMLElement>(".reveal").forEach((el) => {
-          gsap.from(el, {
-            y: 50,
-            opacity: 0,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: { 
-              trigger: el, 
-              start: "top 85%",
-            },
-          });
-        });
-
-        // Staggered reveal for grid items
-        gsap.utils.toArray<HTMLElement>(".stagger-grid").forEach((grid) => {
-          const items = grid.querySelectorAll(".stagger-item");
-          gsap.from(items, {
-            y: 30,
-            opacity: 0,
-            duration: 0.6,
-            ease: "power2.out",
-            stagger: 0.1,
-            scrollTrigger: {
-              trigger: grid,
-              start: "top 85%",
-            }
-          });
-        });
-      }, containerRef);
-
-      ScrollTrigger.refresh();
-    })();
-
-    return () => {
-      active = false;
-      if (ctx) ctx.revert();
-    };
+    // Animations removed to fix content loading delay and visibility issues
   }, []);
 
   return (

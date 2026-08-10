@@ -27,7 +27,9 @@ const timelineEvents = [
 function Index() {
   const { data: events } = useSuspenseQuery(upcomingEventsQuery);
   const { data: albums } = useSuspenseQuery(albumsWithImagesQuery);
-  const galleryImages = albums.flatMap((a) => a.gallery_images || []).slice(0, 8);
+  const galleryImages = albums.flatMap((a) => 
+    (a.gallery_images || []).map(img => ({ ...img, albumName: a.title }))
+  ).slice(0, 8);
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -301,7 +303,11 @@ function Index() {
                   className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/0 to-background/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] opacity-0 transition-opacity duration-300 group-hover:opacity-100 flex items-center justify-center p-4 text-center">
+                  <span className="text-black font-bold text-lg md:text-xl transform translate-y-4 transition-transform duration-500 ease-out group-hover:translate-y-0 drop-shadow-sm">
+                    {img.albumName}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
