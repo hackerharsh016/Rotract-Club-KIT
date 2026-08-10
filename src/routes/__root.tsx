@@ -16,6 +16,7 @@ import { SiteNav } from "../components/site-nav";
 import { SiteFooter } from "../components/site-footer";
 import { Toaster } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import Lenis from "lenis";
 
 function NotFoundComponent() {
   return (
@@ -103,7 +104,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/Rotract_logo.png", type: "image/png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -146,6 +147,43 @@ function RootComponent() {
     });
     return () => sub.subscription.unsubscribe();
   }, [queryClient, router]);
+
+  // Initialize Lenis for smooth scrolling
+  useEffect(() => {
+    const lenis = new Lenis({
+      autoRaf: true,
+      duration: 1.2,
+    });
+    
+    // Smooth scroll for anchor links
+    const handleHashClick = (e: MouseEvent) => {
+      const target = e.currentTarget as HTMLAnchorElement;
+      const hash = target.getAttribute("href");
+      if (hash && hash.startsWith("#") && hash.length > 1) {
+        e.preventDefault();
+        lenis.scrollTo(hash);
+      }
+    };
+    
+    const attachLinks = () => {
+      document.querySelectorAll('a[href^="#"]').forEach((el) => {
+        el.addEventListener("click", handleHashClick as EventListener);
+      });
+    };
+    
+    // Attach initially and on any dynamic renders
+    attachLinks();
+    const observer = new MutationObserver(attachLinks);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      document.querySelectorAll('a[href^="#"]').forEach((el) => {
+        el.removeEventListener("click", handleHashClick as EventListener);
+      });
+      lenis.destroy();
+    };
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

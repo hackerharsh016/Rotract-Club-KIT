@@ -50,6 +50,8 @@ function AdminEvents() {
       ends_at: fd.get("ends_at") ? new Date(String(fd.get("ends_at"))).toISOString() : null,
       max_seats: Number(fd.get("max_seats") ?? 100),
       cover_url: String(fd.get("cover_url") ?? "").trim() || null,
+      rules: String(fd.get("rules") ?? "").trim() || null,
+      prize_pool: String(fd.get("prize_pool") ?? "").trim() || null,
       is_open: true,
     };
     const { error } = await supabase.from("events").insert(payload);
@@ -100,6 +102,24 @@ function AdminEvents() {
           <textarea
             name="description"
             rows={4}
+            className="rounded-xl border border-border bg-muted/40 px-4 py-2.5 text-sm outline-none focus:border-[color:var(--brand-cranberry-hex)]"
+          />
+        </label>
+        <label className="grid gap-1.5 md:col-span-2">
+          <span className="text-xs text-muted-foreground">Rules &amp; Regulations</span>
+          <textarea
+            name="rules"
+            rows={4}
+            placeholder="Enter rules here (optional)..."
+            className="rounded-xl border border-border bg-muted/40 px-4 py-2.5 text-sm outline-none focus:border-[color:var(--brand-cranberry-hex)]"
+          />
+        </label>
+        <label className="grid gap-1.5 md:col-span-2">
+          <span className="text-xs text-muted-foreground">Prize Pool</span>
+          <textarea
+            name="prize_pool"
+            rows={2}
+            placeholder="e.g. Exciting Goodies & Certificates (optional)..."
             className="rounded-xl border border-border bg-muted/40 px-4 py-2.5 text-sm outline-none focus:border-[color:var(--brand-cranberry-hex)]"
           />
         </label>

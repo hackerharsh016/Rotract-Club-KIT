@@ -7,13 +7,11 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-4">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2.5">
-            <span
-              aria-hidden
-              className="grid h-9 w-9 place-items-center rounded-xl text-sm font-bold text-white"
-              style={{ background: "var(--gradient-brand)" }}
-            >
-              R
-            </span>
+            <img
+              src="/Rotract_logo.png"
+              alt="Rotaract Logo"
+              className="h-10 w-10 object-contain drop-shadow-md"
+            />
             <div>
               <div className="text-sm font-semibold">Rotaract Club of KIT Sunshine</div>
               <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">

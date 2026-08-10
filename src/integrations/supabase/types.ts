@@ -53,6 +53,8 @@ export type Database = {
           starts_at: string
           title: string
           venue: string | null
+          rules: string | null
+          prize_pool: string | null
         }
         Insert: {
           category?: string | null
@@ -68,6 +70,8 @@ export type Database = {
           starts_at: string
           title: string
           venue?: string | null
+          rules?: string | null
+          prize_pool?: string | null
         }
         Update: {
           category?: string | null
@@ -83,6 +87,8 @@ export type Database = {
           starts_at?: string
           title?: string
           venue?: string | null
+          rules?: string | null
+          prize_pool?: string | null
         }
         Relationships: []
       }

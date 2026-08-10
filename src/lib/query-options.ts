@@ -160,5 +160,7 @@ export type EventRow = {
   category: string | null;
   max_seats: number;
   is_open: boolean;
+  rules: string | null;
+  prize_pool: string | null;
   created_at: string;
 };

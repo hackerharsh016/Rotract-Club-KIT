@@ -115,9 +115,9 @@ export function HeroParticles() {
         const layerMat = new THREE.MeshBasicMaterial({
           map: logoTexture,
           transparent: true,
-          opacity: 1, // Added to make it faint in color
+          opacity: 0.6, // Added to make it faint in color
           color: isFrontFace ? 0xffffff : layerColor,
-          side: THREE.DoubleSide,
+        side: THREE.DoubleSide,
         });
         disposableMaterials.push(layerMat);
 

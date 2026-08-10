@@ -1,10 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
-import { Calendar, MapPin, Users, ArrowLeft } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Calendar, MapPin, Users, ArrowLeft, Trophy } from "lucide-react";
 import { eventBySlugQuery, eventSeatCountQuery } from "@/lib/query-options";
 
 export const Route = createFileRoute("/events/$slug")({
@@ -37,19 +33,6 @@ export const Route = createFileRoute("/events/$slug")({
   component: EventDetail,
 });
 
-const regSchema = z.object({
-  name: z.string().trim().min(2, "Name is required").max(100),
-  email: z.string().trim().email("Enter a valid email").max(255),
-  phone: z
-    .string()
-    .trim()
-    .min(6, "Enter a valid phone")
-    .max(20)
-    .regex(/^[+\d\s()-]+$/, "Only digits and + - ( ) allowed"),
-  department: z.string().trim().min(1, "Required").max(100),
-  year: z.string().trim().min(1, "Required").max(20),
-});
-
 function fmt(iso: string) {
   return new Date(iso).toLocaleString("en-IN", {
     weekday: "short",
@@ -65,53 +48,22 @@ function EventDetail() {
   const params = Route.useParams();
   const { data: event } = useSuspenseQuery(eventBySlugQuery(params.slug));
   const { data: registered } = useSuspenseQuery(eventSeatCountQuery(event!.id));
-  const qc = useQueryClient();
-  const [submitting, setSubmitting] = useState(false);
-  const [done, setDone] = useState(false);
 
   if (!event) return null;
   const seatsLeft = Math.max(0, event.max_seats - registered);
   const soldOut = seatsLeft === 0;
   const closed = !event.is_open || soldOut;
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!event) return;
-    const fd = new FormData(e.currentTarget);
-    const parsed = regSchema.safeParse(Object.fromEntries(fd));
-    if (!parsed.success) {
-      toast.error(parsed.error.issues[0]?.message ?? "Invalid input");
-      return;
-    }
-    setSubmitting(true);
-    const { error } = await supabase.from("registrations").insert({
-      event_id: event.id,
-      ...parsed.data,
-    });
-    setSubmitting(false);
-    if (error) {
-      toast.error(
-        error.message.includes("row-level")
-          ? "Registrations are closed or seats are full."
-          : error.message,
-      );
-      return;
-    }
-    setDone(true);
-    qc.invalidateQueries({ queryKey: ["event-seats", event.id] });
-    toast.success("You're registered! We'll be in touch.");
-  }
-
   return (
     <div className="mx-auto max-w-6xl px-5 py-10 md:py-16">
       <Link
         to="/events"
-        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6"
       >
         <ArrowLeft className="h-4 w-4" /> All events
       </Link>
 
-      <div className="mt-6 glass overflow-hidden">
+      <div className="glass overflow-hidden rounded-2xl">
         <div className="relative aspect-[21/9] w-full overflow-hidden">
           {event.cover_url ? (
             <img src={event.cover_url} alt={event.title} className="h-full w-full object-cover" />
@@ -131,89 +83,128 @@ function EventDetail() {
       </div>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_380px]">
-        <div>
-          <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-muted-foreground">
-            <span className="inline-flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-[color:var(--brand-gold-hex)]" />
-              {fmt(event.starts_at)}
-            </span>
-            {event.venue ? (
-              <span className="inline-flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-[color:var(--brand-gold-hex)]" /> {event.venue}
-              </span>
-            ) : null}
-            <span className="inline-flex items-center gap-2">
-              <Users className="h-4 w-4 text-[color:var(--brand-gold-hex)]" />
-              {registered}/{event.max_seats} registered
-            </span>
-          </div>
+        <div className="space-y-12">
+          {/* Details Section */}
+          <section>
+            <h2 className="text-2xl font-bold mb-4">Event Details</h2>
+            <div className="whitespace-pre-wrap text-base leading-relaxed text-foreground/80">
+              {event.description}
+            </div>
+          </section>
 
-          <div className="mt-8 whitespace-pre-wrap text-base leading-relaxed text-foreground/80">
-            {event.description}
-          </div>
+          {/* Rules & Regulations Section */}
+          {(event.rules || true) && (
+            <section>
+              <h2 className="text-2xl font-bold mb-4">Rules &amp; Regulations</h2>
+              <div className="glass p-6 md:p-8 rounded-3xl border border-white/10 shadow-xl bg-background/40">
+                {event.rules ? (
+                  <div className="whitespace-pre-wrap text-foreground/80">{event.rules}</div>
+                ) : (
+                  <ul className="space-y-4 text-foreground/80">
+                    <li className="flex items-start gap-3">
+                      <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[color:var(--brand-gold-hex)]"></div>
+                      <p>Participants must carry their valid college ID card or any valid identity proof.</p>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[color:var(--brand-gold-hex)]"></div>
+                      <p>Registration is mandatory for all attendees prior to the event start.</p>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[color:var(--brand-gold-hex)]"></div>
+                      <p>The decision of the organizers and judges will be final and binding.</p>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[color:var(--brand-gold-hex)]"></div>
+                      <p>Any form of misbehavior will lead to immediate disqualification.</p>
+                    </li>
+                  </ul>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* Prize Pool Section */}
+          {(event.prize_pool || true) && (
+            <section>
+              <h2 className="text-2xl font-bold mb-4">Prize Pool</h2>
+              <div className="glass p-6 md:p-8 rounded-3xl border border-white/10 shadow-xl bg-background/40 flex items-center gap-6">
+                <div className="h-16 w-16 shrink-0 rounded-full flex items-center justify-center bg-yellow-500/20 text-yellow-500 shadow-inner">
+                  <Trophy className="h-8 w-8" />
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-1">Rewards &amp; Recognition</div>
+                  <div className="text-2xl font-bold text-gradient-brand">
+                    {event.prize_pool ? event.prize_pool : "Exciting Goodies & Certificates"}
+                  </div>
+                  <p className="text-sm text-foreground/60 mt-1">For all winners and active participants.</p>
+                </div>
+              </div>
+            </section>
+          )}
         </div>
 
-        <aside className="glass h-fit p-6 lg:sticky lg:top-24">
+        <aside className="glass h-fit p-6 lg:sticky lg:top-24 space-y-6 rounded-3xl border border-white/10 shadow-xl">
+          <div className="space-y-5 pb-6 border-b border-border/50">
+             <div className="flex items-start gap-4 text-foreground/90">
+               <div className="p-2 rounded-xl bg-primary/10">
+                 <Calendar className="h-5 w-5 text-[color:var(--brand-gold-hex)]" />
+               </div>
+               <div>
+                 <div className="text-xs text-muted-foreground mb-0.5 uppercase tracking-wider">Date &amp; Time</div>
+                 <div className="text-sm font-semibold">{fmt(event.starts_at)}</div>
+               </div>
+             </div>
+             {event.venue && (
+               <div className="flex items-start gap-4 text-foreground/90">
+                 <div className="p-2 rounded-xl bg-primary/10">
+                   <MapPin className="h-5 w-5 text-[color:var(--brand-gold-hex)]" />
+                 </div>
+                 <div>
+                   <div className="text-xs text-muted-foreground mb-0.5 uppercase tracking-wider">Venue</div>
+                   <div className="text-sm font-semibold">{event.venue}</div>
+                 </div>
+               </div>
+             )}
+             <div className="flex items-start gap-4 text-foreground/90">
+               <div className="p-2 rounded-xl bg-primary/10">
+                 <Users className="h-5 w-5 text-[color:var(--brand-gold-hex)]" />
+               </div>
+               <div>
+                 <div className="text-xs text-muted-foreground mb-0.5 uppercase tracking-wider">Registrations</div>
+                 <div className="text-sm font-semibold">{registered} / {event.max_seats} Booked</div>
+               </div>
+             </div>
+          </div>
+
           <div className="flex items-center justify-between gap-3">
             <div>
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">Seats</div>
-              <div className="text-2xl font-bold">
-                {closed ? "Closed" : `${seatsLeft} left`}
+              <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Remaining Seats</div>
+              <div className="text-3xl font-bold text-gradient-brand">
+                {closed ? "0" : seatsLeft}
               </div>
             </div>
             <div
-              className={`rounded-full px-3 py-1 text-[11px] ${
-                closed ? "bg-muted text-muted-foreground" : "text-white"
+              className={`rounded-full px-4 py-1.5 text-xs font-semibold tracking-wide ${
+                closed ? "bg-muted text-muted-foreground" : "text-white shadow-lg shadow-primary/20"
               }`}
               style={closed ? undefined : { background: "var(--gradient-brand)" }}
             >
-              {closed ? "Closed" : "Open"}
+              {closed ? "CLOSED" : "OPEN"}
             </div>
           </div>
 
-          {done ? (
-            <div className="mt-6 rounded-2xl border border-border bg-muted/40 p-5 text-sm text-foreground/80">
-              <div className="font-semibold text-foreground">You're registered.</div>
-              <p className="mt-1">We'll reach out via email with the details.</p>
-            </div>
-          ) : (
-            <form onSubmit={onSubmit} className="mt-6 grid gap-3">
-              <fieldset disabled={closed || submitting} className="grid gap-3 disabled:opacity-60">
-                <Field label="Full name" name="name" placeholder="Priya Patil" />
-                <Field label="Email" name="email" type="email" placeholder="you@kitcoek.in" />
-                <Field label="Phone" name="phone" placeholder="+91 98XXXXXXXX" />
-                <div className="grid grid-cols-2 gap-3">
-                  <Field label="Department" name="department" placeholder="CSE" />
-                  <Field label="Year" name="year" placeholder="TE" />
-                </div>
-                <button
-                  type="submit"
-                  className="mt-2 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-xl transition hover:brightness-110 disabled:cursor-not-allowed"
-                  style={{ background: "var(--gradient-brand)" }}
-                >
-                  {submitting ? "Registering…" : closed ? "Registrations closed" : "Register now"}
-                </button>
-              </fieldset>
-            </form>
-          )}
+          <Link
+            to="/events/$slug/register"
+            params={{ slug: event.slug }}
+            className={`flex w-full items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-bold text-white shadow-xl transition-all duration-300 ${closed ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:brightness-110 hover:scale-[1.02] hover:shadow-primary/30 active:scale-95'}`}
+            style={{ background: "var(--gradient-brand)" }}
+            disabled={closed}
+            onClick={(e) => { if (closed) e.preventDefault(); }}
+          >
+            {closed ? "Registrations Closed" : "Register Now"}
+          </Link>
         </aside>
       </div>
     </div>
-  );
-}
-
-function Field({
-  label,
-  ...rest
-}: React.InputHTMLAttributes<HTMLInputElement> & { label: string }) {
-  return (
-    <label className="grid gap-1.5 text-sm">
-      <span className="text-xs text-muted-foreground">{label}</span>
-      <input
-        {...rest}
-        required
-        className="rounded-xl border border-border bg-muted/40 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition focus:border-[color:var(--brand-cranberry-hex)]"
-      />
-    </label>
   );
 }

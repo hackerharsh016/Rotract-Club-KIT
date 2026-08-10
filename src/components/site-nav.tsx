@@ -30,13 +30,11 @@ export function SiteNav() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
         <Link to="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
-          <span
-            aria-hidden
-            className="grid h-9 w-9 place-items-center rounded-xl text-sm font-bold text-white shadow-lg"
-            style={{ background: "var(--gradient-brand)" }}
-          >
-            R
-          </span>
+          <img
+            src="/Rotract_logo.png"
+            alt="Rotaract Logo"
+            className="h-10 w-10 object-contain drop-shadow-md"
+          />
           <div className="leading-tight">
             <div className="text-sm font-semibold tracking-wide">Rotaract KIT Sunshine</div>
             <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">

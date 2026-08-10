@@ -1,0 +1,1 @@
+ALTER TABLE "public"."events" ADD COLUMN "rules" text; ALTER TABLE "public"."events" ADD COLUMN "prize_pool" text;

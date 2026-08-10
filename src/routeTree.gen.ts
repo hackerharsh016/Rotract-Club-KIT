@@ -24,6 +24,7 @@ import { Route as AdminRegistrationsRouteImport } from './routes/admin.registrat
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as EventsIndexRouteImport } from './routes/events.index'
 import { Route as EventsSlugRouteImport } from './routes/events.$slug'
+import { Route as EventsSlugRegisterRouteImport } from './routes/events.$slug_.register'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -100,6 +101,11 @@ const EventsSlugRoute = EventsSlugRouteImport.update({
   path: '/events/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsSlugRegisterRoute = EventsSlugRegisterRouteImport.update({
+  id: '/events/$slug_/register',
+  path: '/events/$slug/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/events/$slug': typeof EventsSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/events/': typeof EventsIndexRoute
+  '/events/$slug/register': typeof EventsSlugRegisterRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/events/$slug': typeof EventsSlugRoute
   '/admin': typeof AdminIndexRoute
   '/events': typeof EventsIndexRoute
+  '/events/$slug/register': typeof EventsSlugRegisterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/events/$slug': typeof EventsSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/events/': typeof EventsIndexRoute
+  '/events/$slug_/register': typeof EventsSlugRegisterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/events/$slug'
     | '/admin/'
     | '/events/'
+    | '/events/$slug/register'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/events/$slug'
     | '/admin'
     | '/events'
+    | '/events/$slug/register'
   id:
     | '__root__'
     | '/'
@@ -203,6 +214,7 @@ export interface FileRouteTypes {
     | '/events/$slug'
     | '/admin/'
     | '/events/'
+    | '/events/$slug_/register'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -215,6 +227,7 @@ export interface RootRouteChildren {
   TeamRoute: typeof TeamRoute
   EventsSlugRoute: typeof EventsSlugRoute
   EventsIndexRoute: typeof EventsIndexRoute
+  EventsSlugRegisterRoute: typeof EventsSlugRegisterRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -324,6 +337,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events/$slug_/register': {
+      id: '/events/$slug_/register'
+      path: '/events/$slug/register'
+      fullPath: '/events/$slug/register'
+      preLoaderRoute: typeof EventsSlugRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -357,6 +377,7 @@ const rootRouteChildren: RootRouteChildren = {
   TeamRoute: TeamRoute,
   EventsSlugRoute: EventsSlugRoute,
   EventsIndexRoute: EventsIndexRoute,
+  EventsSlugRegisterRoute: EventsSlugRegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
