@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Trash2, Plus } from "lucide-react";
+import heic2any from "heic2any";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -20,6 +21,7 @@ function slugify(s: string) {
 function AdminEvents() {
   const [events, setEvents] = useState<EventRow[]>([]);
   const [creating, setCreating] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   async function load() {
     const { data, error } = await supabase
@@ -40,6 +42,49 @@ function AdminEvents() {
     const title = String(fd.get("title") ?? "").trim();
     if (!title) return;
     setCreating(true);
+    setProgress(10);
+
+    let cover_url = "";
+    let file = fd.get("cover_image") as File;
+    if (file && file.size > 0) {
+      try {
+        setProgress(20);
+        let ext = file.name.split('.').pop()?.toLowerCase() || "";
+        
+        // Convert HEIC to JPEG so browsers can actually render it
+        if (ext === "heic" || ext === "heif") {
+          toast.info("Optimizing Apple HEIC image...");
+          const convertedBlob = await heic2any({
+            blob: file,
+            toType: "image/jpeg",
+            quality: 0.8
+          });
+          const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+          file = new File([blob], file.name.replace(/\.hei[cf]$/i, ".jpg"), { type: "image/jpeg" });
+          ext = "jpg";
+        }
+
+        setProgress(30);
+        const fileName = `events/${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${ext}`;
+        const fakeProgress = setInterval(() => {
+          setProgress((p) => (p < 85 ? p + 5 : p));
+        }, 300);
+
+        const { error: uploadError } = await supabase.storage.from("public_images").upload(fileName, file);
+        clearInterval(fakeProgress);
+        
+        if (uploadError) throw uploadError;
+        setProgress(90);
+        const { data: publicUrlData } = supabase.storage.from("public_images").getPublicUrl(fileName);
+        cover_url = publicUrlData.publicUrl;
+      } catch (err: any) {
+        setCreating(false);
+        setProgress(0);
+        return toast.error("Image upload failed: " + err.message);
+      }
+    }
+
+    setProgress(95);
     const payload = {
       title,
       slug: slugify(title) + "-" + Math.random().toString(36).slice(2, 6),
@@ -49,13 +94,19 @@ function AdminEvents() {
       starts_at: new Date(String(fd.get("starts_at"))).toISOString(),
       ends_at: fd.get("ends_at") ? new Date(String(fd.get("ends_at"))).toISOString() : null,
       max_seats: Number(fd.get("max_seats") ?? 100),
-      cover_url: String(fd.get("cover_url") ?? "").trim() || null,
+      cover_url: cover_url || null,
       rules: String(fd.get("rules") ?? "").trim() || null,
       prize_pool: String(fd.get("prize_pool") ?? "").trim() || null,
       is_open: true,
     };
     const { error } = await supabase.from("events").insert(payload);
-    setCreating(false);
+    
+    setProgress(100);
+    setTimeout(() => {
+      setCreating(false);
+      setProgress(0);
+    }, 500);
+
     if (error) return toast.error(error.message);
     form.reset();
     toast.success("Event created");
@@ -96,7 +147,15 @@ function AdminEvents() {
         <Field label="Ends at (optional)" name="ends_at" type="datetime-local" />
         <Field label="Venue" name="venue" />
         <Field label="Max seats" name="max_seats" type="number" defaultValue="100" required />
-        <Field label="Cover image URL" name="cover_url" placeholder="https://…" />
+        <label className="grid gap-1.5 md:col-span-2">
+          <span className="text-xs text-muted-foreground">Cover image (optional)</span>
+          <input
+            name="cover_image"
+            type="file"
+            accept="image/*, .heic"
+            className="rounded-xl border border-border bg-muted/40 px-4 py-2 text-sm outline-none file:mr-4 file:rounded-full file:border-0 file:bg-primary/10 file:px-4 file:py-1 file:text-sm file:font-semibold file:text-primary hover:file:bg-primary/20"
+          />
+        </label>
         <label className="grid gap-1.5 md:col-span-2">
           <span className="text-xs text-muted-foreground">Description</span>
           <textarea
@@ -123,6 +182,22 @@ function AdminEvents() {
             className="rounded-xl border border-border bg-muted/40 px-4 py-2.5 text-sm outline-none focus:border-[color:var(--brand-cranberry-hex)]"
           />
         </label>
+        
+        {progress > 0 && (
+          <div className="md:col-span-2 mt-2">
+            <div className="flex justify-between text-xs text-muted-foreground mb-1">
+              <span>Uploading image & creating event...</span>
+              <span>{progress}%</span>
+            </div>
+            <div className="h-2 w-full bg-muted overflow-hidden rounded-full">
+              <div 
+                className="h-full transition-all duration-300 ease-out" 
+                style={{ width: `${progress}%`, background: "var(--gradient-brand)" }} 
+              />
+            </div>
+          </div>
+        )}
+
         <div className="md:col-span-2">
           <button
             disabled={creating}

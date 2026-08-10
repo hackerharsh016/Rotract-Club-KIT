@@ -76,7 +76,7 @@ function Index() {
     <div ref={heroRef}>
       {/* HERO SECTION WITH FULL-PAGE 3D ROTARACT EMBLEM */}
       <section className="relative isolate min-h-[92vh] flex items-center overflow-hidden">
-        <div className="mx-auto w-full max-w-7xl px-5 py-12 md:py-16 lg:py-20 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div className="mx-auto w-full max-w-7xl px-5 pt-28 pb-12 md:pt-36 md:pb-16 lg:pt-40 lg:pb-20 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           
           {/* LEFT: Text Content */}
           <div className="z-10 flex flex-col items-center text-center lg:items-start lg:text-left">

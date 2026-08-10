@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Plus, Trash2 } from "lucide-react";
+import heic2any from "heic2any";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -16,6 +17,8 @@ function AdminGallery() {
   const [images, setImages] = useState<Img[]>([]);
   const [reels, setReels] = useState<Reel[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
+
+  const [uploading, setUploading] = useState(false);
 
   async function loadAll() {
     const [{ data: a }, { data: r }] = await Promise.all([
@@ -52,8 +55,42 @@ function AdminGallery() {
     if (!selected) return;
     const form = e.currentTarget;
     const fd = new FormData(form);
-    const image_url = String(fd.get("image_url") ?? "").trim();
-    if (!image_url) return;
+    
+    let image_url = "";
+    let file = fd.get("image_file") as File;
+    
+    if (file && file.size > 0) {
+      setUploading(true);
+      try {
+        let ext = file.name.split('.').pop()?.toLowerCase() || "";
+        
+        // Convert HEIC to JPEG so browsers can actually render it
+        if (ext === "heic" || ext === "heif") {
+          toast.info("Optimizing Apple HEIC image...");
+          const convertedBlob = await heic2any({
+            blob: file,
+            toType: "image/jpeg",
+            quality: 0.8
+          });
+          const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+          file = new File([blob], file.name.replace(/\.hei[cf]$/i, ".jpg"), { type: "image/jpeg" });
+          ext = "jpg";
+        }
+
+        const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${ext}`;
+        const { error: uploadError } = await supabase.storage.from("public_images").upload(fileName, file);
+        if (uploadError) throw uploadError;
+        const { data: publicUrlData } = supabase.storage.from("public_images").getPublicUrl(fileName);
+        image_url = publicUrlData.publicUrl;
+      } catch (err: any) {
+        setUploading(false);
+        return toast.error("Upload failed: " + err.message);
+      }
+      setUploading(false);
+    }
+    
+    if (!image_url) return toast.error("Please provide an image file.");
+
     const { error } = await supabase.from("gallery_images").insert({
       album_id: selected, image_url,
       caption: String(fd.get("caption") ?? "").trim() || null,
@@ -105,11 +142,20 @@ function AdminGallery() {
       {selected && (
         <section>
           <h2 className="text-lg font-semibold">Photos in album</h2>
+          
           <form onSubmit={addImage} className="glass mt-3 grid gap-2 p-3 md:grid-cols-[1fr_1fr_auto]">
-            <input name="image_url" placeholder="Image URL" className="rounded-xl border border-border bg-muted/40 px-4 py-2 text-sm outline-none" />
+            <input name="image_file" type="file" accept="image/*, .heic" className="rounded-xl border border-border bg-muted/40 px-4 py-2 text-sm outline-none file:mr-4 file:rounded-full file:border-0 file:bg-primary/10 file:px-4 file:py-1 file:text-sm file:font-semibold file:text-primary hover:file:bg-primary/20" />
             <input name="caption" placeholder="Caption" className="rounded-xl border border-border bg-muted/40 px-4 py-2 text-sm outline-none" />
-            <button className="rounded-full px-4 py-2 text-sm font-semibold text-white" style={{ background: "var(--gradient-brand)" }}>Add</button>
+            <button disabled={uploading} className="rounded-full px-4 py-2 text-sm font-semibold text-white disabled:opacity-50" style={{ background: "var(--gradient-brand)" }}>
+              {uploading ? "Uploading..." : "Add"}
+            </button>
+            {uploading && (
+              <div className="md:col-span-3 mt-1 h-1.5 w-full bg-muted overflow-hidden rounded-full">
+                <div className="h-full bg-primary animate-pulse" style={{ width: "100%", background: "var(--gradient-brand)" }} />
+              </div>
+            )}
           </form>
+          
           <div className="mt-3 grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {images.map((i) => (
               <div key={i.id} className="glass overflow-hidden">
