@@ -100,7 +100,7 @@ function EventRegister() {
               <Field label="Full Name" name="name" placeholder="E.g. Priya Patil" />
               <Field label="Email Address" name="email" type="email" placeholder="you@kitcoek.in" />
               <Field label="Phone Number" name="phone" placeholder="+91 98XXXXXXXX" />
-              <div className="grid grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <Field label="Department" name="department" placeholder="CSE, IT, etc." />
                 <Field label="Year" name="year" placeholder="FY, SY, TY, BTech" />
               </div>

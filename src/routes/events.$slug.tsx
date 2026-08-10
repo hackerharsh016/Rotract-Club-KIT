@@ -64,7 +64,7 @@ function EventDetail() {
       </Link>
 
       <div className="glass overflow-hidden rounded-2xl">
-        <div className="relative aspect-[21/9] w-full overflow-hidden">
+        <div className="relative aspect-[4/3] md:aspect-[21/9] w-full overflow-hidden">
           {event.cover_url ? (
             <img src={event.cover_url} alt={event.title} className="h-full w-full object-cover" />
           ) : (
@@ -127,7 +127,7 @@ function EventDetail() {
           {(event.prize_pool || true) && (
             <section>
               <h2 className="text-2xl font-bold mb-4">Prize Pool</h2>
-              <div className="glass p-6 md:p-8 rounded-3xl border border-white/10 shadow-xl bg-background/40 flex items-center gap-6">
+              <div className="glass p-6 md:p-8 rounded-3xl border border-white/10 shadow-xl bg-background/40 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
                 <div className="h-16 w-16 shrink-0 rounded-full flex items-center justify-center bg-yellow-500/20 text-yellow-500 shadow-inner">
                   <Trophy className="h-8 w-8" />
                 </div>

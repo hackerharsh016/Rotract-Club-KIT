@@ -148,6 +148,8 @@ function RootComponent() {
     return () => sub.subscription.unsubscribe();
   }, [queryClient, router]);
 
+  const isHome = pathname === "/";
+
   // Initialize Lenis for smooth scrolling
   useEffect(() => {
     const lenis = new Lenis({
@@ -192,7 +194,7 @@ function RootComponent() {
       ) : (
         <div className="flex min-h-screen flex-col">
           <SiteNav />
-          <main className="flex-1">
+          <main className={`flex-1 ${!isHome ? "pt-24 md:pt-32" : ""}`}>
             <Outlet />
           </main>
           <SiteFooter />
